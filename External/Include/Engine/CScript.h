@@ -1,0 +1,81 @@
+#pragma once
+#include "CComponent.h"
+
+#include "CLevelMgr.h"
+#include "CLevel.h"
+#include "CLayer.h"
+
+#include "CResMgr.h"
+#include "CTimeMgr.h"
+#include "CKeyMgr.h"
+
+#include "CGameObject.h"
+#include "components.h"
+
+
+enum class SCRIPT_PARAM
+{
+    INT,
+    FLOAT,
+    VEC2,
+    VEC4,
+    BOOL,
+};
+
+struct tScriptParam
+{
+    SCRIPT_PARAM    eParam;
+    void*           pData;    
+    string          strDesc;
+};
+
+class CCollider2D;
+class CCollider3D;
+
+class CScript :
+    public CComponent
+{
+private:  
+    UINT                    m_iScriptType;
+    vector<tScriptParam>    m_vecParam;
+
+
+public:
+    void Destroy() { DestroyObject(GetOwner()); }
+    void SetLifeSpan(float _Time) { GetOwner()->SetLifeSpan(_Time); }
+    UINT GetScriptType() { return m_iScriptType; }
+    const vector<tScriptParam>& GetScritpParam() { return m_vecParam; }
+
+public:   
+    virtual void finaltick() final {};
+    virtual void BeginOverlap(CCollider2D* _Other) {}
+    virtual void BeginOverlap(CCollider3D* _Other) {}
+    virtual void OnOverlap(CCollider2D* _Other) {}
+    virtual void OnOverlap(CCollider3D* _Other) {}
+    virtual void EndOverlap(CCollider2D* _Other) {}
+    virtual void EndOverlap(CCollider3D* _Other) {}
+
+    Vec3 ConvertToRadians(Vec3 _vec)
+    { return Vec3(XMConvertToRadians(_vec.x), XMConvertToRadians(_vec.y), XMConvertToRadians(_vec.z));}
+
+    float CalculDist(const Vec3& _a, const Vec3& _b)
+    {
+        float dx = _b.x - _a.x;
+        float dy = _b.y - _a.y;
+        float dz = _b.z - _a.z;
+
+        return sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+public:
+    virtual void SaveToLevelFile(FILE* _File) override {}
+    virtual void LoadFromLevelFile(FILE* _FILE) override {}
+
+protected:
+    void AddScriptParam(SCRIPT_PARAM eParam, void* _pData, const string& _Desc);
+
+public:
+    CScript(UINT _iScriptType);
+    ~CScript();
+};
+
