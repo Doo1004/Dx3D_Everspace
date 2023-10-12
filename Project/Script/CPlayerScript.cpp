@@ -6,22 +6,24 @@
 #include <Engine\CSound.h>
 
 #include "CMuzzleScript.h"
-#include "CMissileScript.h"
+#include "CHPBarScript.h"
+#include "CUIScript.h"
 
 
 CPlayerScript::CPlayerScript()
 	: CScript((UINT)SCRIPT_TYPE::PLAYERSCRIPT)
 	, m_fMaxSpeed(250.f)
 	, m_DefaultRot(90.f, 180.f, 0.f)
-	, m_iHP(5000)
+	, m_iMaxHP(300)
 {
-	AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fMaxSpeed, "MaxSpeed");
-	AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fSpeed, "Speed");
-	AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fAccel, "Accel");
-	AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fBreak, "Break");
-	AddScriptParam(SCRIPT_PARAM::VEC4, &m_vAxis, "Axis");
-	AddScriptParam(SCRIPT_PARAM::BOOL, &m_bDamage, "Damage");
-	AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fBulletDelay, "BulletDelay");
+	//AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fMaxSpeed, "MaxSpeed");
+	//AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fSpeed, "Speed");
+	//AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fAccel, "Accel");
+	//AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fBreak, "Break");
+	//AddScriptParam(SCRIPT_PARAM::VEC4, &m_vAxis, "Axis");
+	//AddScriptParam(SCRIPT_PARAM::BOOL, &m_bDamage, "Damage");
+	//AddScriptParam(SCRIPT_PARAM::FLOAT, &m_fBulletDelay, "BulletDelay");
+	AddScriptParam(SCRIPT_PARAM::INT, &m_iHP, "PlayerHP");
 }
 
 CPlayerScript::~CPlayerScript()
@@ -33,12 +35,16 @@ CPlayerScript::~CPlayerScript()
 void CPlayerScript::begin()
 {
 	GetMuzzleData();
+	CreateHPGauge();
+	CreateInvText();
 
 	m_sBGM = (CResMgr::GetInst()->FindRes<CSound>(L"Sound\\Title.mp3")).Get();
 	m_sBGM->Play(0, 0.3f, true);
 
 	m_sEngineSound = (CResMgr::GetInst()->FindRes<CSound>(L"Sound\\Moving.mp3")).Get();
 	m_sEngineSound->Play(0, m_fPlayerSpeed, true);
+
+	m_iHP = m_iMaxHP;
 
 	Transform()->SetRelativeRot(ConvertToRadians(Vec3(90.f, 180.f, 0.f)));
 }
@@ -55,11 +61,13 @@ void CPlayerScript::tick()
 
 void CPlayerScript::BeginOverlap(CCollider3D* _Other)
 {
-
 	if (_Other->GetOwner()->GetLayerIndex() == 5)		// 몬스터 총알에 맞았을 때
 	{
 		if (!m_bDamage)									// 카메라를 통한 피격 효과
 		{
+			if(!m_bInvincible)
+				m_iHP -= 10;
+
 			m_bDamage = true;
 			m_fDamageDT = 0.5f;
 		}
@@ -266,22 +274,42 @@ void CPlayerScript::PlayerFunction()
 
 	if (KEY_TAP(KEY::LCTRL))
 	{
-		
+		if (m_bInvincible)
+			m_bInvincible = false;
+		else
+			m_bInvincible = true;
 	}
+
+	if (m_bInvincible)
+	{
+		m_InvText->Font()->SetColor(Vec4(255.f, 0.f, 0.f, 255.f));
+	}
+	else
+		m_InvText->Font()->SetColor(Vec4(255.f, 0.f, 0.f, 0.f));
+
+	//=========================HPGauge=========================//
+
+	float fHPRatio = (float)m_iHP / (float)m_iMaxHP;				// 플레이어 체력 비율 계산
+
+	m_pHPGauge->GetScript<CHPBarScript>()->SetPlayerEnable(true);
+	m_pHPGauge->GetScript<CHPBarScript>()->SetHPRatio(fHPRatio);
+	m_pHPGauge->GetScript<CHPBarScript>()->SetPos(Vec3(14, -329, 0)); 
+	m_pHPGauge->GetScript<CHPBarScript>()->SetHPBarScale(159.f, 20.f);
 }
 
-//void CPlayerScript::CreateAim()
-//{
-//	m_pAim = new CGameObject;
-//	m_pAim->SetName(L"Player_Aim");
-//	m_pAim->AddComponent(new CTransform);
-//	m_pAim->AddComponent(new CMeshRender);
-//	m_pAim->Transform()->SetRelativeScale(Vec3(10.f, 10.f, 10.f));
-//	m_pAim->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"SphereMesh"));
-//	m_pAim->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"material\\GreenAim.mtrl"), 0);
-//
-//	SpawnGameObject(m_pAim, Vec3(0.f, 0.f, 0.f), 0);
-//}
+void CPlayerScript::CreateHPGauge()
+{
+	m_pHPGauge = new CGameObject;
+	m_pHPGauge->SetName(L"PlayerHPGauge");
+	m_pHPGauge->AddComponent(new CTransform);
+	m_pHPGauge->AddComponent(new CMeshRender);
+	m_pHPGauge->AddComponent(new CHPBarScript);
+	m_pHPGauge->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	m_pHPGauge->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"material\\PlayerHPGauge.mtrl"), 0);
+
+	SpawnGameObject(m_pHPGauge, Vec3(0, -330, 0), 31);
+}
+
 
 void CPlayerScript::GetMuzzleData()
 {
@@ -320,6 +348,22 @@ void CPlayerScript::CreateText()
 	m_NaviText->Font()->SetPos(Vec2(30.f, 720.f));
 
 	SpawnGameObject(m_NaviText, Vec3(0.f, 0.f, 0.f), 0);
+}
+
+void CPlayerScript::CreateInvText()
+{
+	m_InvText = new CGameObject;
+	m_InvText->SetName(L"InvText");
+
+	m_InvText->AddComponent(new CTransform);
+	m_InvText->AddComponent(new CFont);
+
+	m_InvText->Font()->SetString(L"Debug Mode");
+	m_InvText->Font()->SetColor(Vec4(255.f, 0.f, 0.f, 255.f));
+	m_InvText->Font()->SetScale(20.f);
+	m_InvText->Font()->SetPos(Vec2(575.f, 735.f));
+
+	SpawnGameObject(m_InvText, Vec3(0.f, 0.f, 0.f), 0);
 }
 
 void CPlayerScript::SaveToLevelFile(FILE* _File)

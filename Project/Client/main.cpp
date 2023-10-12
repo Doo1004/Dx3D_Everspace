@@ -55,7 +55,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // 테스트 용 레벨 생성
     CreateTestLevel();
 
-    CLevel* pLoadedLevel = CLevelSaveLoad::LoadLevel(L"Level\\MainLevel.lv");
+    CLevel* pLoadedLevel = CLevelSaveLoad::LoadLevel(L"Level\\MainLevel_1.lv");
 
     if (pLoadedLevel)
     {

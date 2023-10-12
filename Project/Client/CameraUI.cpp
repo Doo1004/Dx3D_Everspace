@@ -55,13 +55,18 @@ int CameraUI::render_update()
     if(ImGui::Button("Set##1"))
         GetTarget()->Camera()->SetCameraIndex(m_iIndex);
 
-
     SetLabel("LayerMask", 80.f, 18.f, 0.4f, 1.f, 0.4f);
     ImGui::InputInt("##Layer", &m_iLayer);
     ImGui::SameLine();
     m_bLayerCheck = GetTarget()->Camera()->IsLayerMask(m_iLayer);
     ImGui::Checkbox("##Check", &m_bLayerCheck);
     GetTarget()->Camera()->SetLayerMask(m_iLayer, m_bLayerCheck);
+
+    SetLabel("UIEnable", 80.f, 18.f, 0.4f, 1.f, 0.4f);
+    ImGui::SameLine();
+    m_bCameraUI = GetTarget()->Camera()->IsCameraUIRender();
+    ImGui::Checkbox("##CameraUI", &m_bCameraUI);
+    GetTarget()->Camera()->SetCameraUIRender(m_bCameraUI);
 
     return TRUE;
 }

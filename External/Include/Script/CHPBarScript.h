@@ -9,7 +9,9 @@ private:
 
     Vec3            m_vCurPos;
     float           m_fHPRatio;
+    Vec2            m_fHPBarScale;
     bool            m_bBoss;
+    bool            m_bPlayerUI;
 
     void GetCameraObj();
 
@@ -40,7 +42,10 @@ private:
 public:
     void SetPos(Vec3 _vPos) { m_vCurPos = _vPos; }
     void SetBossEnable(bool _bBoss) { m_bBoss = _bBoss; }
+    void SetPlayerEnable(bool _bPlayer) { m_bPlayerUI = _bPlayer; }
     void SetHPRatio(float _fRatio) { m_fHPRatio = _fRatio; }
+    void SetHPBarScale(float _fScaleX, float _fScaleY) { m_fHPBarScale = Vec2(_fScaleX, _fScaleY); }
+    void SetHPBarScale(Vec2 _fScale) { m_fHPBarScale = _fScale; }
 
 public:
     virtual void begin() override;

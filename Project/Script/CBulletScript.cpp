@@ -40,7 +40,8 @@ void CBulletScript::tick()
 		else if (m_bBulletHit)
 			m_fBulletSpeed = 0.f;
 
-		Vec3 vFinalPos = m_vCurPos + Vec3(m_fBulletSpeed, m_fBulletSpeed, m_fBulletSpeed) * m_vAxis;
+		//Vec3 vFinalPos = m_vCurPos + Vec3(m_fBulletSpeed, m_fBulletSpeed, m_fBulletSpeed) * m_vAxis;
+		Vec3 vFinalPos = m_vCurPos + m_vAxis * m_fBulletSpeed;
 		Vec3 vFinalRot = ConvertToRadians(vCurRot);
 
 		Transform()->SetRelativePos(vFinalPos);

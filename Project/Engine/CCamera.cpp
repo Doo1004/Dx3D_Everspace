@@ -32,6 +32,7 @@ CCamera::CCamera()
 	, m_iLayerMask(0)
 	, m_iCamIdx(-1)
 	, m_CameraDebugScale(1.f)
+	, m_bUICamera(false)
 {
 	SetName(L"Camera");
 
@@ -50,6 +51,7 @@ CCamera::CCamera(const CCamera& _Other)
 	, m_iLayerMask(_Other.m_iLayerMask)
 	, m_iCamIdx(-1)
 	, m_CameraDebugScale(1.f)
+	, m_bUICamera(false)
 {
 }
 
@@ -149,8 +151,6 @@ void CCamera::CalcProjMat()
 
 	// 투영행렬 역행렬
 	m_matProjInv = XMMatrixInverse(nullptr, m_matProj);
-
-	
 }
 
 
@@ -158,13 +158,9 @@ void CCamera::CalcProjMat()
 void CCamera::SetLayerMask(int _iLayer, bool _Visible)
 {
 	if (_Visible)
-	{
 		m_iLayerMask |= 1 << _iLayer;
-	}
 	else
-	{
 		m_iLayerMask &= ~(1 << _iLayer);
-	}
 }
 
 void CCamera::SetLayerMaskAll(bool _Visible)
@@ -277,41 +273,47 @@ void CCamera::render()
 	g_transform.matViewInv = m_matViewInv;
 	g_transform.matProj = m_matProj;
 
-	// =====================================
-	// 쉐이더 도메인에 따라서 순차적으로 그리기
-	// =====================================
-	// Deferred Object
-	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::DEFERRED)->OMSet();
-	render_deferred();
-
-	// Decal Render
-	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::DECAL)->OMSet();
-	render_decal();
-
-	// Lighting
-	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::LIGHT)->OMSet();
-	
-	const vector<CLight3D*> vecLight3D = CRenderMgr::GetInst()->GetLight3D();
-	for (size_t i = 0; i < vecLight3D.size(); ++i)
+	if (!m_bUICamera)
 	{
-		vecLight3D[i]->render();
+		// =====================================
+		// 쉐이더 도메인에 따라서 순차적으로 그리기
+		// =====================================
+		// Deferred Object
+		CRenderMgr::GetInst()->GetMRT(MRT_TYPE::DEFERRED)->OMSet();
+		render_deferred();
+
+		// Decal Render
+		CRenderMgr::GetInst()->GetMRT(MRT_TYPE::DECAL)->OMSet();
+		render_decal();
+
+		// Lighting
+		CRenderMgr::GetInst()->GetMRT(MRT_TYPE::LIGHT)->OMSet();
+
+		const vector<CLight3D*> vecLight3D = CRenderMgr::GetInst()->GetLight3D();
+		for (size_t i = 0; i < vecLight3D.size(); ++i)
+		{
+			vecLight3D[i]->render();
+		}
+
+		// (Deferred + Light) Merge
+		CRenderMgr::GetInst()->GetMRT(MRT_TYPE::SWAPCHAIN)->OMSet();
+		render_merge();
+
+
+		// Forward Object	
+		render_opaque();
+		render_mask();
+		render_transparent();
+
+		// PostProcess
+		render_postprocess();
+
+		// UI
+		render_ui();
 	}
 
-	// (Deferred + Light) Merge
-	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::SWAPCHAIN)->OMSet();
-	render_merge();
-
-
-	// Forward Object	
-	render_opaque();
-	render_mask();
-	render_transparent();
-
-	// PostProcess
-	render_postprocess();
-
-	// UI
-	render_ui();
+	else
+		render_ui();
 }
 
 void CCamera::render_depthmap()
@@ -417,6 +419,7 @@ void CCamera::SaveToLevelFile(FILE* _File)
 	fwrite(&m_ProjType, sizeof(UINT), 1, _File);
 	fwrite(&m_iLayerMask, sizeof(UINT), 1, _File);
 	fwrite(&m_iCamIdx, sizeof(int), 1, _File);
+	fwrite(&m_bUICamera, sizeof(bool), 1, _File);
 }
 
 void CCamera::LoadFromLevelFile(FILE* _File)
@@ -426,4 +429,5 @@ void CCamera::LoadFromLevelFile(FILE* _File)
 	fread(&m_ProjType, sizeof(UINT), 1, _File);
 	fread(&m_iLayerMask, sizeof(UINT), 1, _File);
 	fread(&m_iCamIdx, sizeof(int), 1, _File);
+	fread(&m_bUICamera, sizeof(bool), 1, _File);
 }

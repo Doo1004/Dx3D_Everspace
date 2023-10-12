@@ -573,32 +573,22 @@ void CResMgr::CreateDefaultGraphicsShader()
 
 	AddRes(pShader->GetKey(), pShader);
 
-//	// ============================
-//	// Std3D_DeferredShaderUI
-//	// RasterizerState      : CULL_BACK
-//	// BlendState           : Mask
-//	// DepthStencilState    : Less
-//	//
-//	// Parameter
-//	// g_tex_0              : Output Texture
-//	// ============================
-//	pShader = new CGraphicsShader;
-//	pShader->SetKey(L"Std3DUI_DeferredShader");
-//	pShader->CreateVertexShader(L"shader\\std3d_deferred.fx", "VS_Std3D_Deferred");
-//	pShader->CreatePixelShader(L"shader\\std3d_deferred.fx", "PS_Std3D_Deferred");
-//
-//	pShader->SetRSType(RS_TYPE::CULL_BACK);
-//	pShader->SetDSType(DS_TYPE::LESS_EQUAL);
-//	pShader->SetBSType(BS_TYPE::MASK);
-//
-//	pShader->SetDomain(SHADER_DOMAIN::DOMAIN_UI);
-//
-//	// Param	
-//	pShader->AddTexParam(TEX_0, "Output Texture");
-//	pShader->AddTexParam(TEX_1, "Normal Texture");
-//
-//	AddRes(pShader->GetKey(), pShader);
+	//=====================2D UI
+	pShader = new CGraphicsShader;
+	pShader->SetKey(L"Std2DUIShader");
+	pShader->CreateVertexShader(L"shader\\std2d.fx", "VS_Std2D");
+	pShader->CreatePixelShader(L"shader\\std2d.fx", "PS_Std2D");
 
+	pShader->SetRSType(RS_TYPE::CULL_NONE);
+	pShader->SetDSType(DS_TYPE::LESS);
+	pShader->SetBSType(BS_TYPE::MASK);
+
+	pShader->SetDomain(SHADER_DOMAIN::DOMAIN_UI);
+
+	// Param	
+	pShader->AddTexParam(TEX_0, "Output Texture");
+
+	AddRes(pShader->GetKey(), pShader);
 
 	// =================
 	// DebugShape Shader

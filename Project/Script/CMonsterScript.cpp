@@ -126,6 +126,10 @@ void CMonsterScript::SetMonsterData()
 		{
 			m_pHPGauge->GetScript<CHPBarScript>()->SetHPRatio(m_fHPRatio);
 			m_pHPGauge->GetScript<CHPBarScript>()->SetPos(m_vCurPos);
+			if (GetOwner()->GetName() == L"UFO_2")
+				m_pHPGauge->GetScript<CHPBarScript>()->SetHPBarScale(100.f, 10.f);
+			else
+				m_pHPGauge->GetScript<CHPBarScript>()->SetHPBarScale(500.f, 20.f);
 		}
 	}
 }

@@ -15,7 +15,7 @@
     <ClInclude Include="CCameraMoveScript.h">
       <Filter>Script</Filter>
     </ClInclude>
-    <ClInclude Include="CMissileScript.h">
+    <ClInclude Include="CUIScript.h">
       <Filter>Script</Filter>
     </ClInclude>
     <ClInclude Include="CMonsterScript.h">
@@ -59,7 +59,7 @@
     <ClCompile Include="CCameraMoveScript.cpp">
       <Filter>Script</Filter>
     </ClCompile>
-    <ClCompile Include="CMissileScript.cpp">
+    <ClCompile Include="CUIScript.cpp">
       <Filter>Script</Filter>
     </ClCompile>
     <ClCompile Include="CMonsterScript.cpp">

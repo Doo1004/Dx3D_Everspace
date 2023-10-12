@@ -174,7 +174,7 @@ call ScriptCopy.bat</Command>
     <ClInclude Include="CHPBarScript.h" />
     <ClInclude Include="CMapObjectScript.h" />
     <ClInclude Include="CExplosionScript.h" />
-    <ClInclude Include="CMissileScript.h" />
+    <ClInclude Include="CUIScript.h" />
     <ClInclude Include="CMonsterScript.h" />
     <ClInclude Include="CMuzzleScript.h" />
     <ClInclude Include="CNavObjScript.h" />
@@ -190,7 +190,7 @@ call ScriptCopy.bat</Command>
     <ClCompile Include="CHPBarScript.cpp" />
     <ClCompile Include="CMapObjectScript.cpp" />
     <ClCompile Include="CExplosionScript.cpp" />
-    <ClCompile Include="CMissileScript.cpp" />
+    <ClCompile Include="CUIScript.cpp" />
     <ClCompile Include="CMonsterScript.cpp" />
     <ClCompile Include="CMuzzleScript.cpp" />
     <ClCompile Include="CNavObjScript.cpp" />

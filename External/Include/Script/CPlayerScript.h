@@ -41,6 +41,7 @@ private:
     bool                m_BreakEnable;          // 플레이어 브레이크
 
     int                 m_iHP;                  // 플레이어 체력
+    int                 m_iMaxHP;               // 플레이어 최대 체력
 
     PLAYER_PITCH        m_ePitch;               // 플레이어 기체 상승 & 하강
     PLAYER_ROLL         m_eRoll;                // 플레이어 기체 상승 & 하강
@@ -68,14 +69,18 @@ private:
     CMuzzleScript*      m_MuzzleScript_1;
     CMuzzleScript*      m_MuzzleScript_2;
 
-    //======================Text====================//
+    //==================UI & Text====================//
     CGameObject*        m_NaviText;             // 위치 표시
+    CGameObject*        m_pHPGauge;             // 체력바
     CSound*             m_sEngineSound;
     CSound*             m_sBGM;
 
     UINT			    m_iCallCount;
     float			    m_fDeltaTime;
     float			    m_fTime;
+
+    bool                m_bInvincible;          // 무적 디버그
+    CGameObject*        m_InvText;
 
 public:
     bool IsBackView() { return m_bBackView; }
@@ -100,7 +105,9 @@ private:
     void PlayerAccel();
     void PlayerRotation();
     void PlayerFunction();
+    void CreateHPGauge();
     void CreateText();
+    void CreateInvText();
 
     //void CreateAim();
     void GetMuzzleData();

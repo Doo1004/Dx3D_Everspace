@@ -14,6 +14,8 @@ private:
     int         m_iLayer;
     bool        m_bLayerCheck;
 
+    bool        m_bCameraUI;
+
     int         m_iIndex;
 
     UINT        m_iProjType;

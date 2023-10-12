@@ -4,7 +4,7 @@
 #include "CCameraMoveScript.h"
 #include "CBackFireScript.h"
 #include "CBulletScript.h"
-#include "CMissileScript.h"
+#include "CUIScript.h"
 #include "CExplosionScript.h"
 #include "CMuzzleScript.h"
 #include "CMonsterScript.h"
@@ -18,7 +18,7 @@ void CScriptMgr::GetScriptInfo(vector<wstring>& _vec)
 	_vec.push_back(L"CCameraMoveScript");
 	_vec.push_back(L"CBackFireScript");
 	_vec.push_back(L"CBulletScript");
-	_vec.push_back(L"CMissileScript");
+	_vec.push_back(L"CUIScript");
 	_vec.push_back(L"CExplosionScript");
 	_vec.push_back(L"CMuzzleScript");
 	_vec.push_back(L"CMonsterScript");
@@ -36,8 +36,8 @@ CScript * CScriptMgr::GetScript(const wstring& _strScriptName)
 		return new CBackFireScript;
 	if (L"CBulletScript" == _strScriptName)
 		return new CBulletScript;
-	if (L"CMissileScript" == _strScriptName)
-		return new CMissileScript;
+	if (L"CUIScript" == _strScriptName)
+		return new CUIScript;
 	if (L"CExplosionScript" == _strScriptName)
 		return new CExplosionScript;
 	if (L"CMuzzleScript" == _strScriptName)
@@ -69,7 +69,7 @@ CScript * CScriptMgr::GetScript(UINT _iScriptType)
 		return new CBulletScript;
 		break;
 	case (UINT)SCRIPT_TYPE::MISSILESCRIPT:
-		return new CMissileScript;
+		return new CUIScript;
 		break;
 	case (UINT)SCRIPT_TYPE::EXPLOSIONSCRIPT:
 		return new CExplosionScript;
@@ -113,7 +113,7 @@ const wchar_t * CScriptMgr::GetScriptName(CScript * _pScript)
 		break;
 
 	case SCRIPT_TYPE::MISSILESCRIPT:
-		return L"CMissileScript";
+		return L"CUIScript";
 		break;
 
 	case SCRIPT_TYPE::EXPLOSIONSCRIPT:

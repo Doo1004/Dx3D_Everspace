@@ -24,6 +24,8 @@ private:
 
     int                     m_iCamIdx;  // 카메라 우선순위
 
+    bool                    m_bUICamera;
+
     tRay                    m_ray;      // 마우스 방향을 향하는 직선
 
     vector<CGameObject*>    m_vecDeferred;
@@ -66,6 +68,9 @@ public:
 
     void SetCameraDebugScale(float _fScale) { m_CameraDebugScale = _fScale; }
     float GetCameraDebugScale() { return m_CameraDebugScale; }
+
+    void SetCameraUIRender(bool _bEnable) { m_bUICamera = _bEnable; }
+    bool IsCameraUIRender() { return m_bUICamera; }
 
     const tRay& GetRay() { return m_ray; }
 

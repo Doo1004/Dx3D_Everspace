@@ -181,7 +181,7 @@ int MenuUI::render_update()
                 ImGui::SameLine();
                 ImGui::Checkbox("Std3dUI", &m_Std3DUI);
                 ImGui::SameLine();
-                ImGui::Checkbox("Distortion", &m_Distortion);
+                ImGui::Checkbox("Std2dUI", &m_Distortion);   // 임시로 2DUI로 대체
 
                 if (ImGui::MenuItem("Create"))
                 {
@@ -198,7 +198,7 @@ int MenuUI::render_update()
                     else if (m_Std3DUI)
                         pMtrl->SetShader(pRes->FindRes<CGraphicsShader>(L"Std3DUI_DeferredShader"));
                     else if (m_Distortion)
-                        pMtrl->SetShader(pRes->FindRes<CGraphicsShader>(L"DistortionShader"));
+                        pMtrl->SetShader(pRes->FindRes<CGraphicsShader>(L"Std2DUIShader"));
 
                     pRes->AddRes(ChangeToWString(m_MtrlName), pMtrl);
 
